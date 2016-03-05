@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
+var entries = [
+  {slug:"how to pass class", body: "come to class. do your homework", created_at: "some date"},
+  {slug:"how to fail class", body: "play video games all day", created_at: "some date"}
+];
+
 /* GET til listing. */
 router.get('/', function(req, res, next) {
   res.render('til/index', { title: 'Today I Learned' });
