@@ -8,7 +8,7 @@ var til = [
 
 /* READ all: GET til listing. */
 router.get('/', function(req, res, next) {
-  res.render('til/index', { title: 'Blog', til: til });
+  res.render('til/index', { title: 'Today I learned', til: til });
 });
 
 /* CREATE entry form: GET /til/new */
@@ -19,7 +19,7 @@ router.get('/new', function(req, res, next) {
 /*CREATE entry: POST /til/ */
 router.post('/', function(req, res, next) {
   til.push(req.body);
-  res.render('til/index', { title: 'Blog', til: til });
+  res.render('til/index', { title: 'Today I learned', til: til });
 });
 
 /* UPDATE entry form: GET /til/1/edit */
