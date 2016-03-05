@@ -6,9 +6,9 @@ var entries = [
   {slug:"how to fail class", body: "play video games all day", created_at: "some date"}
 ];
 
-/* GET til listing. */
+/* READ all: GET til listing. */
 router.get('/', function(req, res, next) {
-  res.render('til/index', { title: 'Today I Learned' });
+  res.render('til/index', { title: 'Blog', entries: entries });
 });
 
 /* CREATE entry form: GET /til/new */
@@ -19,7 +19,7 @@ router.get('/new', function(req, res, next) {
 /*CREATE entry: POST /til/ */
 router.post('/', function(req, res, next) {
   til.push(req.body);
-  res.render('til/index', { title: 'Today I Learned', til: til });
+  res.render('til/index', { title: 'Blog', entries: entries });
 });
 
 /* UPDATE entry form: GET /til/1/edit */
@@ -28,31 +28,31 @@ router.get('/:id/edit', function(req, res, next) {
   {
     title: 'Update an entry',
     id: req.params.id,
-    entry: til[req.params.id]
+    entry: entries[req.params.id]
   });
 });
 
 /* UPDATE entry: POST /til/1 */
 router.post('/:id', function(req, res, next) {
-  til[req.params.id] = req.body;
+  entries[req.params.id] = req.body;
   res.render('til/index',
   {
     title: 'Update an entry',
-    til: til
+    entries: entries
   });
 });
 
 /* DELETE entry: GET /til/1/delete  */
 router.get('/:id/delete', function(req, res, next) {
   var id = req.params.id
-  til = til.slice(0,id).concat(til.slice(id+1, til.length));
-  res.render('til/index', { title: 'Blog', til: til });
+  entries = entries.slice(0,id).concat(entries.slice(id+1, entries.length));
+  res.render('til/index', { title: 'Blog', entries: entries });
 });
 
 /* THIS NEEDS TO BE LAST or /new goes here rather than where it should */
 /* READ one entry: GET /til/0 */
 router.get('/:id', function(req, res, next) {
-  res.render('til/entry', {title: "a entry", entry: til[req.params.id]});
+  res.render('til/entry', {title: "a entry", entry: entries[req.params.id]});
 });
 
 module.exports = router;
