@@ -10,6 +10,15 @@ var til = require('./routes/til');
 
 var app = express();
 
+var orm = require('orm');
+var localstring = "postgres://cs2610:foo@localhost/entries";
+var dbstring = process.env.DATABASE_URL||localstring;
+app.use(orm.express(dbstring, {
+  define: function (db, models, next){
+    next();
+  }
+}));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
