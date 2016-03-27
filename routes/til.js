@@ -8,7 +8,14 @@ var til = [
 
 /* READ all: GET til listing. */
 router.get('/', function(req, res, next) {
-  res.render('til/index', { title: 'Today I learned', til: til });
+  req.db.driver.execQuery)
+  "SELECT * FROM til",
+  function (err, data){
+    if(err){console.log(err);}
+    console.log(data);
+    res.render('til/index', {title: 'Today I learned', til: til});
+  }
+)
 });
 
 /* CREATE entry form: GET /til/new */
