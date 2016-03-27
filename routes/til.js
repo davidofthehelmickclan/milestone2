@@ -8,7 +8,7 @@ var til = [
 
 /* READ all: GET til listing. */
 router.get('/', function(req, res, next) {
-  req.db.driver.execQuery)
+  req.db.driver.execQuery(
   "SELECT * FROM til",
   function (err, data){
     if(err){console.log(err);}
@@ -25,8 +25,15 @@ router.get('/new', function(req, res, next) {
 
 /*CREATE entry: POST /til/ */
 router.post('/', function(req, res, next) {
+  req.db.driver.execQuery(
+    "INSERT INTO til (slug,body) VALUES (reg.slug, reg.body)",
+    function (err, data){
+    if(err){console.log(err);}
+    console.log(data);
   til.push(req.body);
   res.render('til/index', { title: 'Today I learned', til: til });
+    }
+  )
 });
 
 /* UPDATE entry form: GET /til/1/edit */
@@ -41,25 +48,45 @@ router.get('/:id/edit', function(req, res, next) {
 
 /* UPDATE entry: POST /til/1 */
 router.post('/:id', function(req, res, next) {
+  req.db.driver.execQuery(
+    "UPDATE til SET slug = req.slug, body = req.body WHERE id = req.params.id",
+    function (err, data){
+    if(err){console.log(err);}
+    console.log(data);
   til[req.params.id] = req.body;
   res.render('til/index',
   {
     title: 'Update an entry',
     til: til
   });
+  }
+)
 });
 
 /* DELETE entry: GET /til/1/delete  */
 router.get('/:id/delete', function(req, res, next) {
-  var id = req.params.id
-  til = til.slice(0,id).concat(til.slice(id+1, til.length));
+  req.db.driver.execQuery(
+    "DELETE FROM til WHERE id = req.params.id",
+    function (err, data){
+    if(err){console.log(err);}
+    console.log(data);
+  til = til.slice(0,req.params.id).concat(til.slice(req.params.id+1, til.length));
   res.render('til/index', { title: 'Blog', til: til });
+    }
+  )
 });
 
 /* THIS NEEDS TO BE LAST or /new goes here rather than where it should */
 /* READ one entry: GET /til/0 */
 router.get('/:id', function(req, res, next) {
+  req.db.driver.execQuery(
+    "SELECT FROM til WHERE id = req.params.id",
+    function (err, data){
+    if(err){console.log(err);}
+    console.log(data);
   res.render('til/entry', {title: "a entry", entry: til[req.params.id]});
+    }
+  )
 });
 
 module.exports = router;
