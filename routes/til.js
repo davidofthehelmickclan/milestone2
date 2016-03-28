@@ -1,21 +1,20 @@
 var express = require('express');
 var router = express.Router();
 
-var til = [
-  {slug:"how to pass class", body: "come to class. do your homework", created_at: "some date"},
-  {slug:"how to fail class", body: "play video games all day", created_at: "some date"}
-];
+var til = [];
 
 /* READ all: GET til listing. */
 router.get('/', function(req, res, next) {
+  console.log(reg.cookies.username);
+  var name = req.cookies.username || 'anonymous';
   req.db.driver.execQuery(
-  "SELECT * FROM til",
+  "SELECT * FROM til;",
   function (err, data){
     if(err){console.log(err);}
-    console.log(data);
-    res.render('til/index', {title: 'Today I learned', til: til});
+
+    res.render('til/index', {title: 'Today I learned', til: til, name: name});
   }
-)
+);
 });
 
 /* CREATE entry form: GET /til/new */
@@ -26,67 +25,73 @@ router.get('/new', function(req, res, next) {
 /*CREATE entry: POST /til/ */
 router.post('/', function(req, res, next) {
   req.db.driver.execQuery(
-    "INSERT INTO til (slug,body) VALUES (reg.slug, reg.body)",
+    "INSERT INTO til (slug,body) VALUES (?, ?);",
+    [req.body.slug, req.body.body],
     function (err, data){
     if(err){console.log(err);}
     console.log(data);
-  til.push(req.body);
-  res.render('til/index', { title: 'Today I learned', til: til });
+  res.redirect(303, '/til/index');
     }
-  )
+  );
 });
 
 /* UPDATE entry form: GET /til/1/edit */
 router.get('/:id/edit', function(req, res, next) {
+  req.db.driver.execQuery(
+    'SELECT FROM * til WHERE id = ?;',
+    [paarseInt(req.param.id)],
+    function (err, data){
+      if(err){console.log(err);}
   res.render('til/update',
   {
     title: 'Update an entry',
-    id: req.params.id,
-    entry: til[req.params.id]
+    til: data[0]
   });
+  }
+);
 });
 
 /* UPDATE entry: POST /til/1 */
 router.post('/:id', function(req, res, next) {
+  var id = parseInt(req.param.id);
   req.db.driver.execQuery(
-    "UPDATE til SET slug = req.slug, body = req.body WHERE id = req.params.id",
+    'UPDATE til SET slug = ?, body = ? WHERE id = ?;',
+    [req.body.slug, req.body.body, parseInt(req.param.id)],
     function (err, data){
     if(err){console.log(err);}
-    console.log(data);
-  til[req.params.id] = req.body;
-  res.render('til/index',
-  {
-    title: 'Update an entry',
-    til: til
-  });
+  res.redirect(303, '/til/' + id);
   }
-)
+);
 });
 
 /* DELETE entry: GET /til/1/delete  */
 router.get('/:id/delete', function(req, res, next) {
   req.db.driver.execQuery(
-    "DELETE FROM til WHERE id = req.params.id",
+    'DELETE FROM til WHERE id = ?;',
+    [parseInt(req.param.id)],
     function (err, data){
     if(err){console.log(err);}
-    console.log(data);
-  til = til.slice(0,req.params.id).concat(til.slice(req.params.id+1, til.length));
-  res.render('til/index', { title: 'Blog', til: til });
+  res.redirect(303, '/til/');
     }
-  )
+  );
 });
 
 /* THIS NEEDS TO BE LAST or /new goes here rather than where it should */
 /* READ one entry: GET /til/0 */
 router.get('/:id', function(req, res, next) {
   req.db.driver.execQuery(
-    "SELECT FROM til WHERE id = req.params.id",
+    'SELECT FROM til WHERE id = ?;',
+    [parseInt(req.param.id)],
     function (err, data){
     if(err){console.log(err);}
-    console.log(data);
-  res.render('til/entry', {title: "a entry", entry: til[req.params.id]});
+  res.render('til/entry', {title: "a entry", til: data[0]});
     }
-  )
+  );
 });
+
+router.get('/logout', function(req, res){
+  res.cookie('username', null);
+  res.redirect("/");
+})
 
 module.exports = router;
