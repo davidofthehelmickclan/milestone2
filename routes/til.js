@@ -89,9 +89,4 @@ router.get('/:id', function(req, res, next) {
   );
 });
 
-router.get('/logout', function(req, res){
-  res.cookie('username', null);
-  res.redirect("/");
-})
-
 module.exports = router;
