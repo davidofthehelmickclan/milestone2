@@ -53,10 +53,10 @@ router.get('/:id/edit', function(req, res, next) {
 
 /* UPDATE entry: POST /til/1 */
 router.post('/:id', function(req, res, next) {
-  var id = parseInt(req.param.id);
+  var id = parseInt(req.params.id);
   req.db.driver.execQuery(
     'UPDATE til SET slug = ?, body = ? WHERE id = ?;',
-    [req.body.slug, req.body.body, parseInt(req.param.id)],
+    [req.body.slug, req.body.body, parseInt(req.params.id)],
     function (err, data){
     if(err){console.log(err);}
   res.redirect(303, '/til/' + id);
@@ -68,7 +68,7 @@ router.post('/:id', function(req, res, next) {
 router.get('/:id/delete', function(req, res, next) {
   req.db.driver.execQuery(
     'DELETE FROM til WHERE id = ?;',
-    [parseInt(req.param.id)],
+    [parseInt(req.params.id)],
     function (err, data){
     if(err){console.log(err);}
   res.redirect(303, '/til/');
@@ -81,7 +81,7 @@ router.get('/:id/delete', function(req, res, next) {
 router.get('/:id', function(req, res, next) {
   req.db.driver.execQuery(
     'SELECT FROM til WHERE id = ?;',
-    [parseInt(req.param.id)],
+    [parseInt(req.params.id)],
     function (err, data){
     if(err){console.log(err);}
   res.render('til/entry', {title: "a entry", til: data[0]});
