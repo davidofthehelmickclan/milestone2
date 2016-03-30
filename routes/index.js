@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var crypto = require('crypto');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -11,6 +12,7 @@ router.get('/login', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
+  var sha1sum = crypto.createHash('sha1');
 
   req.db.driver.execQuery(
     'SELECT * FROM users WHERE email=?;',
@@ -21,14 +23,17 @@ router.post('/login', function(req, res, next) {
         console.log(err);
       }
 
-      if(req.body.password == data[0].password) //DONT Do this is other projects!!!
+      sha1sum.update(req.body.password);
+      var hashed_input = sha1sum.digest('hex');
+
+      if(hashed_input === data[0].password) //DONT Do this is other projects!!!
       {
         res.cookie('username', data[0].name);
-        res.redirect('/til/');
+        res.redirect(303, '/til/');
       }
       else
       {
-        res.redirect('/login');
+        res.redirect(303, '/login');
       }
     }
   );
