@@ -21,7 +21,7 @@ router.post('/login', function(req, res, next) {
         console.log(err);
       }
 
-      if(req.body.password === data[0].password) //DONT Do this is other projects!!!
+      if(req.body.password == data[0].password) //DONT Do this is other projects!!!
       {
         res.cookie('username', data[0].name);
         res.redirect('/til/');
